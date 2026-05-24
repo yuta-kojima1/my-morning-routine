@@ -2,6 +2,7 @@ import { stripe } from '@/lib/stripe/client'
 import { createServiceClient } from '@/lib/supabase/server'
 import { getProduct } from '@/lib/products'
 import Link from 'next/link'
+import DownloadButton from './DownloadButton'
 
 type Props = {
   searchParams: Promise<{ session_id?: string }>
@@ -34,10 +35,11 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
     productName = product.name
 
     const supabase = await createServiceClient()
-    const { data } = await supabase.storage
+    const { data, error } = await supabase.storage
       .from('products')
-      .createSignedUrl(product.audioPath, 60 * 60 * 24, { download: true }) // 24時間有効・強制ダウンロード
+      .createSignedUrl(product.audioPath, 60 * 60 * 24)
 
+    if (error) console.error('createSignedUrl error:', error)
     downloadUrl = data?.signedUrl ?? null
   } catch (err) {
     console.error(err)
@@ -61,13 +63,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
         </p>
 
         {downloadUrl ? (
-          <a
-            href={downloadUrl}
-            download
-            className="inline-block border border-[#111110] bg-[#111110] px-10 py-4 text-sm font-semibold tracking-[0.12em] uppercase text-[#F5F3EF] transition hover:bg-[#333]"
-          >
-            音声をダウンロード
-          </a>
+          <DownloadButton url={downloadUrl} filename={`${productName}.mp3`} />
         ) : (
           <p className="text-sm text-[#9E9B97]">
             ダウンロードリンクの生成に失敗しました。サポートにご連絡ください。
