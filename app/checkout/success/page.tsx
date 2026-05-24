@@ -35,7 +35,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
 
     const supabase = await createServiceClient()
     const { data } = await supabase.storage
-      .from('audio-products')
+      .from('products')
       .createSignedUrl(product.audioPath, 60 * 60) // 1時間有効
 
     downloadUrl = data?.signedUrl ?? null
