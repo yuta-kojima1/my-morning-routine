@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const PROTECTED_PATHS = ['/mypage', '/checkout']
+const PROTECTED_PATHS = ['/mypage']
 
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
