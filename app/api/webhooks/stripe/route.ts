@@ -21,23 +21,25 @@ export async function POST(req: NextRequest) {
     const productId = session.metadata?.product_id
     const userId = session.client_reference_id
 
-    if (!productId || !userId) {
+    if (!productId) {
       return NextResponse.json({ error: 'Missing metadata' }, { status: 400 })
     }
 
-    const supabase = await createServiceClient()
-
-    await supabase.from('purchases').upsert(
-      {
-        user_id: userId,
-        product_id: productId,
-        stripe_session_id: session.id,
-        stripe_payment_intent_id: session.payment_intent as string,
-        amount_paid: session.amount_total ?? 0,
-        status: 'completed',
-      },
-      { onConflict: 'stripe_session_id' },
-    )
+    // ログイン済みユーザーの購入のみDBに記録（ゲストはスキップ）
+    if (userId) {
+      const supabase = await createServiceClient()
+      await supabase.from('purchases').upsert(
+        {
+          user_id: userId,
+          product_id: productId,
+          stripe_session_id: session.id,
+          stripe_payment_intent_id: session.payment_intent as string,
+          amount_paid: session.amount_total ?? 0,
+          status: 'completed',
+        },
+        { onConflict: 'stripe_session_id' },
+      )
+    }
   }
 
   return NextResponse.json({ received: true })

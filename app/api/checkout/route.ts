@@ -7,10 +7,6 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
   const { productId } = await req.json()
   const product = PRODUCTS.find((p) => p.id === productId)
 
@@ -21,7 +17,7 @@ export async function POST(req: NextRequest) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL!
 
   const session = await stripe.checkout.sessions.create({
-    client_reference_id: user.id,
+    ...(user ? { client_reference_id: user.id } : {}),
     mode: 'payment',
     line_items: [
       {
