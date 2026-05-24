@@ -36,7 +36,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
     const supabase = await createServiceClient()
     const { data } = await supabase.storage
       .from('products')
-      .createSignedUrl(product.audioPath, 60 * 60) // 1時間有効
+      .createSignedUrl(product.audioPath, 60 * 60 * 24) // 24時間有効
 
     downloadUrl = data?.signedUrl ?? null
   } catch (err) {
@@ -51,13 +51,13 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
         <p className="mb-2 text-[10px] font-semibold tracking-[0.3em] uppercase text-[#9E9B97]">
           Purchase Complete
         </p>
-        <h1 className="mb-4 font-serif text-3xl font-bold text-[#111110]">
+        <h1 className="mb-4 font-serif text-2xl font-bold text-[#111110]">
           ご購入ありがとうございます
         </h1>
         <p className="mb-8 text-sm leading-relaxed text-[#7A7672]">
           {productName} のダウンロードリンクです。
           <br />
-          リンクは1時間有効です。お早めにダウンロードください。
+          リンクは24時間有効です。お早めにダウンロードください。
         </p>
 
         {downloadUrl ? (
