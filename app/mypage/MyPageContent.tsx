@@ -8,6 +8,7 @@ type Purchase = {
   id: string
   product_id: string
   purchased_at: string
+  audioUrl: string | null
   product: { name: string } | null
 }
 
@@ -50,10 +51,11 @@ export default function MyPageContent({ purchases }: { purchases: Purchase[] }) 
 
             {isOpen && meta && (
               <div className="border-t border-white/10 p-6">
-                <AudioPlayer src="/sample.mp3" accentColor={meta.accentColor} />
-                <p className="mt-3 text-xs text-gray-600">
-                  ※ 実際のコンテンツはSupabase Storageの音声ファイルと接続後にご利用いただけます
-                </p>
+                {purchase.audioUrl ? (
+                  <AudioPlayer src={purchase.audioUrl} accentColor={meta.accentColor} />
+                ) : (
+                  <p className="text-sm text-gray-500">音声ファイルを読み込めませんでした</p>
+                )}
               </div>
             )}
           </div>

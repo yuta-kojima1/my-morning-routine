@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { PRODUCTS } from '@/lib/products'
 import MyPageContent from './MyPageContent'
 
@@ -16,6 +16,20 @@ export default async function MyPage() {
     .eq('status', 'completed')
     .order('purchased_at', { ascending: false })
 
+  const serviceClient = await createServiceClient()
+  const purchasesWithUrls = await Promise.all(
+    (purchases ?? []).map(async (purchase) => {
+      const meta = PRODUCTS.find((p) => p.id === purchase.product_id)
+      if (!meta) return { ...purchase, audioUrl: null }
+
+      const { data } = await serviceClient.storage
+        .from('products')
+        .createSignedUrl(meta.audioPath, 3600)
+
+      return { ...purchase, audioUrl: data?.signedUrl ?? null }
+    }),
+  )
+
   return (
     <div className="min-h-screen pt-20 pb-16">
       <div className="mx-auto max-w-4xl px-4 md:px-8">
@@ -28,8 +42,8 @@ export default async function MyPage() {
           <h2 className="text-lg font-semibold text-white">購入済みコンテンツ</h2>
         </div>
 
-        {purchases && purchases.length > 0 ? (
-          <MyPageContent purchases={purchases} />
+        {purchasesWithUrls.length > 0 ? (
+          <MyPageContent purchases={purchasesWithUrls} />
         ) : (
           <div className="rounded-2xl border border-white/10 bg-[#141414] p-12 text-center">
             <p className="mb-2 text-2xl">🎵</p>

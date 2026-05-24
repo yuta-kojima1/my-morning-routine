@@ -39,7 +39,7 @@ export const PRODUCTS: ProductMeta[] = [
 
     price: 2480,
     sampleAudioPath: '/audio/samples/morning-detox-sample.mp3',
-    audioPath: 'products/morning-detox.mp3',
+    audioPath: 'morning-detox-trial.mp3',
     heroImage: '/images/morning-hero.png',
     testimonials: [
       { name: 'Y.M（28歳）', role: 'デザイナー', comment: '起きてすぐSNSを見る癖がなくなりました。午前中の作業効率が全然違います。', rating: 5 },
@@ -65,7 +65,7 @@ export const PRODUCTS: ProductMeta[] = [
 
     price: 2480,
     sampleAudioPath: '/audio/samples/night-detox-sample.mp3',
-    audioPath: 'products/night-detox.mp3',
+    audioPath: 'night-detox-trial.mp3',
     heroImage: '/images/night-hero.png',
     testimonials: [
       { name: 'R.N（26歳）', role: 'フリーランス', comment: '夜中にずっとSNSを見ていた私が、22時にはスマホを置けるようになりました。', rating: 5 },
